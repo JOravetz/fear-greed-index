@@ -50,7 +50,7 @@ print(fgi.get_complete_report())
 Launch the interactive dashboard:
 
 ```bash
-uv run streamlit run app.py
+uv run streamlit run app.py --server.headless=true
 ```
 
 Then open http://localhost:8501 in your browser.

@@ -136,7 +136,11 @@ def main():
     console.print("[dim]Press Ctrl+C to stop the dashboard and exit the demo.[/dim]\n")
 
     try:
-        subprocess.run(["uv", "run", "streamlit", "run", "app.py"])
+        subprocess.run([
+            "uv", "run", "streamlit", "run", "app.py",
+            "--server.headless=true",
+            "--browser.gatherUsageStats=false"
+        ])
     except KeyboardInterrupt:
         console.print("\n[yellow]Dashboard stopped.[/yellow]")
 
