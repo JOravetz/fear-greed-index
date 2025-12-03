@@ -531,6 +531,18 @@ The CNN API returns JSON with the following structure:
 }
 ```
 
+## Disclaimer
+
+**THIS SOFTWARE IS PROVIDED FOR INFORMATIONAL AND EDUCATIONAL PURPOSES ONLY.**
+
+- This library is not affiliated with, endorsed by, or connected to CNN or Warner Bros. Discovery.
+- The Fear & Greed Index data is sourced from CNN's public-facing API, which may change or become unavailable at any time.
+- **This is NOT financial or investment advice.** The trading signals, recommendations, and analysis examples in this documentation are for illustrative purposes only.
+- Past performance and sentiment indicators do not guarantee future results.
+- Always conduct your own research and consult with a qualified financial advisor before making any investment decisions.
+- The authors and contributors of this software are not responsible for any financial losses, damages, or other consequences resulting from the use of this software.
+- Use at your own risk.
+
 ## License
 
 MIT License
