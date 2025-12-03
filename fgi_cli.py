@@ -41,15 +41,31 @@ def get_emoji_for_score(score: float) -> str:
         return "💚"
 
 
-def create_gauge(score: float, width: int = 40) -> Text:
-    """Create a text-based gauge as a Rich Text object."""
+def create_gauge(score: float, width: int = 50) -> Text:
+    """Create a text-based gauge as a Rich Text object with labels and pointer."""
     filled = int((score / 100) * width)
     empty = width - filled
     color = get_color_for_score(score)
 
+    # Calculate pointer position
+    pointer_pos = int((score / 100) * width)
+    label_offset = 7  # "FEAR 0 " length
+
     gauge = Text()
+
+    # First line: pointer with score
+    gauge.append(" " * (label_offset + pointer_pos))
+    gauge.append(f"▼ {score:.0f}", style=f"bold {color}")
+    gauge.append("\n")
+
+    # Second line: the gauge bar with labels
+    gauge.append("FEAR ", style="bold red")
+    gauge.append("0 ", style="dim")
     gauge.append("█" * filled, style=color)
     gauge.append("░" * empty, style="dim")
+    gauge.append(" 100", style="dim")
+    gauge.append(" GREED", style="bold green")
+
     return gauge
 
 
