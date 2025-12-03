@@ -2,7 +2,7 @@
 __docformat__ = "numpy"
 
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 
 
 class FearAndGreedIndicator:
@@ -35,8 +35,8 @@ class FearAndGreedIndicator:
         self.name = name
         self.score = 0.0
         self.rating = "N/A"
-        self.timestamp = None
-        self.historical_data = []
+        self.timestamp: Optional[datetime] = None
+        self.historical_data: list[dict[str, Any]] = []
 
         if data:
             self._load_from_data(data)

@@ -2,6 +2,7 @@
 __docformat__ = "numpy"
 
 from datetime import datetime
+from typing import Optional
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib.colors import LinearSegmentedColormap
@@ -200,7 +201,7 @@ class CNNFearAndGreedIndex:
         """Get historical Fear and Greed Index data"""
         return self.historical_data
 
-    def plot_fear_greed_index(self, ax: plt.Axes = None) -> plt.Axes:
+    def plot_fear_greed_index(self, ax: Optional[plt.Axes] = None) -> plt.Axes:
         """Plot Fear and Greed Index historical chart
 
         Parameters
@@ -229,7 +230,7 @@ class CNNFearAndGreedIndex:
         # Plot with color based on value
         for i in range(len(dates) - 1):
             color = cmap(values[i] / 100)
-            ax.plot(dates[i:i+2], values[i:i+2], color=color, linewidth=2)
+            ax.plot(dates[i:i+2], values[i:i+2], color=color, linewidth=2)  # type: ignore[arg-type]
 
         # Add horizontal bands for sentiment zones
         ax.axhspan(0, 25, alpha=0.1, color='red', label='Extreme Fear')
@@ -250,7 +251,7 @@ class CNNFearAndGreedIndex:
 
         return ax
 
-    def plot_all_indicators(self, fig: plt.Figure = None) -> plt.Figure:
+    def plot_all_indicators(self, fig: Optional[plt.Figure] = None) -> plt.Figure:
         """Plot all indicator scores as a bar chart
 
         Parameters
@@ -300,7 +301,7 @@ class CNNFearAndGreedIndex:
 
         return fig
 
-    def plot_all_charts(self, fig: plt.Figure = None) -> plt.Figure:
+    def plot_all_charts(self, fig: Optional[plt.Figure] = None) -> plt.Figure:
         """Plot comprehensive Fear and Greed dashboard
 
         Parameters
