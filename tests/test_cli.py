@@ -9,24 +9,24 @@ class TestCLIHelpers:
     """Tests for CLI helper functions."""
 
     def test_get_color_extreme_fear(self):
-        """Test color for extreme fear score."""
-        assert get_color_for_score(10) == "red"
+        """Test color for extreme fear score (matches web app)."""
+        assert get_color_for_score(10) == "#8B0000"
 
     def test_get_color_fear(self):
-        """Test color for fear score."""
-        assert get_color_for_score(35) == "orange1"
+        """Test color for fear score (matches web app)."""
+        assert get_color_for_score(35) == "#FF4500"
 
     def test_get_color_neutral(self):
-        """Test color for neutral score."""
-        assert get_color_for_score(50) == "yellow"
+        """Test color for neutral score (matches web app)."""
+        assert get_color_for_score(50) == "#FFD700"
 
     def test_get_color_greed(self):
-        """Test color for greed score."""
-        assert get_color_for_score(65) == "green"
+        """Test color for greed score (matches web app)."""
+        assert get_color_for_score(65) == "#32CD32"
 
     def test_get_color_extreme_greed(self):
-        """Test color for extreme greed score."""
-        assert get_color_for_score(85) == "dark_green"
+        """Test color for extreme greed score (matches web app)."""
+        assert get_color_for_score(85) == "#006400"
 
     def test_get_emoji_extreme_fear(self):
         """Test emoji for extreme fear score."""

@@ -13,32 +13,42 @@ from datetime import datetime
 console = Console()
 
 
+# Color scheme matching web app (app.py)
+COLORS = {
+    "extreme_fear": "#8B0000",  # Dark red
+    "fear": "#FF4500",          # Orange red
+    "neutral": "#FFD700",       # Gold
+    "greed": "#32CD32",         # Lime green
+    "extreme_greed": "#006400", # Dark green
+}
+
+
 def get_color_for_score(score: float) -> str:
-    """Return rich color based on fear/greed score."""
+    """Return rich color based on fear/greed score (matches web app)."""
     if score < 25:
-        return "red"
+        return COLORS["extreme_fear"]
     elif score < 45:
-        return "orange1"
+        return COLORS["fear"]
     elif score < 55:
-        return "yellow"
+        return COLORS["neutral"]
     elif score < 75:
-        return "green"
+        return COLORS["greed"]
     else:
-        return "dark_green"
+        return COLORS["extreme_greed"]
 
 
 def get_emoji_for_score(score: float) -> str:
-    """Return emoji based on fear/greed score."""
+    """Return emoji based on fear/greed score (matches web app zones)."""
     if score < 25:
-        return "🔴"
+        return "🔴"  # Extreme Fear
     elif score < 45:
-        return "🟠"
+        return "🟠"  # Fear
     elif score < 55:
-        return "🟡"
+        return "🟡"  # Neutral
     elif score < 75:
-        return "🟢"
+        return "🟢"  # Greed
     else:
-        return "💚"
+        return "💚"  # Extreme Greed
 
 
 def create_gauge(score: float, width: int = 54) -> Text:
@@ -59,12 +69,12 @@ def create_gauge(score: float, width: int = 54) -> Text:
     gauge.append("\n")
 
     # Second line: the gauge bar with labels
-    gauge.append("FEAR ", style="bold red")
+    gauge.append("FEAR ", style=f"bold {COLORS['extreme_fear']}")
     gauge.append("0 ", style="dim")
     gauge.append("█" * filled, style=color)
     gauge.append("░" * empty, style="dim")
     gauge.append(" 100", style="dim")
-    gauge.append(" GREED", style="bold green")
+    gauge.append(" GREED", style=f"bold {COLORS['extreme_greed']}")
 
     return gauge
 
