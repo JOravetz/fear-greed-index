@@ -305,7 +305,9 @@ _cache = {"data": None, "timestamp": None}
 def get_fgi():
     """Get Fear & Greed data with simple caching."""
     now = datetime.now()
-    if _cache["data"] is None or (now - _cache["timestamp"]).seconds > 300:
+    if (_cache["data"] is None or
+        _cache["timestamp"] is None or
+        (now - _cache["timestamp"]).total_seconds() > 300):
         _cache["data"] = CNNFearAndGreedIndex()
         _cache["timestamp"] = now
     return _cache["data"]

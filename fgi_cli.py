@@ -41,7 +41,7 @@ def get_emoji_for_score(score: float) -> str:
         return "💚"
 
 
-def create_gauge(score: float, width: int = 56) -> Text:
+def create_gauge(score: float, width: int = 54) -> Text:
     """Create a text-based gauge as a Rich Text object with labels and pointer."""
     filled = int((score / 100) * width)
     empty = width - filled
