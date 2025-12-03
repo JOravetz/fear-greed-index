@@ -5,7 +5,7 @@ description = "CNN Fear and Greed Index"
 authors = [{name = "Didier Rodrigues Lopes", email = "dro.lopes@campus.fct.unl.pt"}]
 license = {text = "MIT"}
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "requests>=2.25.1",
     "bs4>=0.0.1",
@@ -14,10 +14,18 @@ dependencies = [
     "Pillow>=9.0.0",
     "streamlit>=1.50.0",
     "plotly>=6.5.0",
+    "rich>=14.2.0",
+    "click>=8.3.1",
+    "alpaca-py>=0.43.2",
+    "mcp>=1.23.1",
 ]
 
+[project.scripts]
+fgi = "fgi_cli:main"
+fgi-mcp = "fgi_mcp_server:main"
+
 [project.urls]
-Repository = "https://github.com/DidierRLopes/fear-greed-index"
+Repository = "https://github.com/JOravetz/fear-greed-index"
 
 [dependency-groups]
 dev = [

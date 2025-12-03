@@ -8,6 +8,9 @@ A Python library and web dashboard for fetching and visualizing CNN's Fear & Gre
 - **7 market indicators**: Junk Bond Demand, Market Volatility (VIX), Put/Call Options, Market Momentum (S&P 500), Stock Price Strength, Stock Price Breadth, Safe Haven Demand
 - **Historical data** with 1-year trend analysis
 - **Interactive web dashboard** built with Streamlit and Plotly
+- **Beautiful CLI** with Rich terminal interface
+- **MCP Server** for AI assistant integration (Claude, Cursor, VS Code)
+- **Alpaca Trading integration** for automated trading workflows
 - **Python API** for programmatic access
 
 ## Installation
@@ -51,6 +54,33 @@ uv run streamlit run app.py
 ```
 
 Then open http://localhost:8501 in your browser.
+
+### Command Line Interface (CLI)
+
+Beautiful terminal interface powered by Rich:
+
+```bash
+# Full dashboard with gauge and tables
+uv run fgi dashboard
+
+# Just the current score
+uv run fgi score
+
+# Trading signal (STRONG BUY/BUY/HOLD/SELL/STRONG SELL)
+uv run fgi signal
+
+# All indicators in detail
+uv run fgi indicators
+
+# Historical data (last 10 days by default)
+uv run fgi history --limit 20
+
+# JSON output for scripting
+uv run fgi json
+
+# Live watch mode (refreshes every 60 seconds)
+uv run fgi watch
+```
 
 ## Usage Examples
 
@@ -530,6 +560,137 @@ The CNN API returns JSON with the following structure:
   "safe_haven_demand": {"score": 27.6, "rating": "fear", ...}
 }
 ```
+
+## MCP Server (AI Integration)
+
+This library includes an MCP (Model Context Protocol) server that allows AI assistants like Claude, Cursor, and VS Code to query Fear & Greed data using natural language.
+
+### Available MCP Tools
+
+| Tool | Description |
+|------|-------------|
+| `get_fear_greed_score` | Get current score and rating |
+| `get_fear_greed_indicators` | Get all 7 individual indicators |
+| `get_fear_greed_comparison` | Compare with previous periods |
+| `get_trading_signal` | Get trading signal with recommendation |
+| `get_fear_greed_history` | Get historical data (configurable days) |
+| `get_complete_report` | Get full comprehensive report |
+
+### Configure for Claude Desktop
+
+Add to your Claude Desktop config (`~/.config/Claude/claude_desktop_config.json` on Linux, `~/Library/Application Support/Claude/claude_desktop_config.json` on Mac):
+
+```json
+{
+  "mcpServers": {
+    "fear-greed-index": {
+      "command": "uv",
+      "args": ["run", "--directory", "/path/to/fear-greed-index", "python", "fgi_mcp_server.py"]
+    }
+  }
+}
+```
+
+### Configure for Cursor / VS Code
+
+Add to your MCP settings:
+
+```json
+{
+  "mcp.servers": {
+    "fear-greed-index": {
+      "command": "uv",
+      "args": ["run", "--directory", "/path/to/fear-greed-index", "python", "fgi_mcp_server.py"]
+    }
+  }
+}
+```
+
+### Example AI Prompts
+
+Once configured, you can ask your AI assistant:
+
+- "What's the current Fear & Greed Index?"
+- "Give me a trading signal based on market sentiment"
+- "How has sentiment changed over the past week?"
+- "Show me all the individual market indicators"
+
+## Alpaca Trading Integration
+
+Combine Fear & Greed sentiment data with [Alpaca's MCP Server](https://github.com/alpacahq/alpaca-mcp-server) for AI-powered trading workflows.
+
+### Setup Both MCP Servers
+
+Configure both servers in your Claude Desktop config:
+
+```json
+{
+  "mcpServers": {
+    "fear-greed-index": {
+      "command": "uv",
+      "args": ["run", "--directory", "/path/to/fear-greed-index", "python", "fgi_mcp_server.py"]
+    },
+    "alpaca": {
+      "command": "uvx",
+      "args": ["alpaca-mcp-server", "serve"],
+      "env": {
+        "ALPACA_API_KEY": "your_alpaca_api_key",
+        "ALPACA_SECRET_KEY": "your_alpaca_secret_key"
+      }
+    }
+  }
+}
+```
+
+### Example Combined Workflows
+
+With both servers configured, you can use natural language for sophisticated trading workflows:
+
+**Sentiment-Based Trading:**
+```
+"Check the Fear & Greed Index. If it's in Extreme Fear territory,
+buy 10 shares of SPY using my Alpaca account."
+```
+
+**Portfolio Rebalancing:**
+```
+"Get my current Alpaca positions and the Fear & Greed trading signal.
+If the signal is STRONG SELL and I'm holding SPY, close half my position."
+```
+
+**Market Analysis:**
+```
+"Show me the Fear & Greed indicators and get the latest SPY quote from Alpaca.
+Should I be adding to my position?"
+```
+
+### Alpaca MCP Server Features
+
+The [Alpaca MCP Server](https://github.com/alpacahq/alpaca-mcp-server) provides:
+
+- **Trading**: Stocks, ETFs, crypto, and options
+- **Market Data**: Real-time quotes, bars, and historical data
+- **Account Management**: Positions, balances, buying power
+- **Order Management**: Market, limit, stop, trailing-stop orders
+- **Options Trading**: Single and multi-leg strategies
+
+### Installation
+
+```bash
+# Install Alpaca MCP Server
+uvx alpaca-mcp-server init
+
+# Or clone the repository
+git clone https://github.com/alpacahq/alpaca-mcp-server.git
+cd alpaca-mcp-server
+python3 install.py
+```
+
+### Resources
+
+- [Alpaca MCP Server GitHub](https://github.com/alpacahq/alpaca-mcp-server)
+- [Alpaca MCP Documentation](https://docs.alpaca.markets/docs/alpaca-mcp-server)
+- [Building Trading Workflows with MCP](https://alpaca.markets/learn/mcp-trading-with-claude-alpaca-google-sheets)
 
 ## Disclaimer
 
