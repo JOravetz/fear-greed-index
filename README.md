@@ -40,15 +40,6 @@ print(f"Rating: {fgi.rating}")      # e.g., "extreme fear"
 
 # Get complete report
 print(fgi.get_complete_report())
-
-# Access individual indicators
-print(f"VIX: {fgi.market_volatility.score} ({fgi.market_volatility.rating})")
-print(f"S&P 500 Momentum: {fgi.market_momentum.score}")
-
-# Get historical data for analysis
-historical = fgi.get_historical_data()
-for point in historical[-5:]:  # Last 5 data points
-    print(f"{point['x']}: {point['y']:.1f} ({point['rating']})")
 ```
 
 ### Web Dashboard
@@ -61,6 +52,173 @@ uv run streamlit run app.py
 
 Then open http://localhost:8501 in your browser.
 
+## Usage Examples
+
+### Example 1: Basic Market Sentiment Check
+
+```python
+from fear_greed_index import CNNFearAndGreedIndex
+
+fgi = CNNFearAndGreedIndex()
+
+print(f"Current Fear & Greed Index: {fgi.score:.1f}")
+print(f"Market Sentiment: {fgi.rating.upper()}")
+print(f"Previous Close: {fgi.previous_close:.1f}")
+print(f"Change: {fgi.score - fgi.previous_close:+.1f}")
+```
+
+### Example 2: Compare Current vs Historical Sentiment
+
+```python
+from fear_greed_index import CNNFearAndGreedIndex
+
+fgi = CNNFearAndGreedIndex()
+
+print("Fear & Greed Index Comparison")
+print("=" * 40)
+print(f"Now:          {fgi.score:.1f} ({fgi.rating})")
+print(f"Yesterday:    {fgi.previous_close:.1f}")
+print(f"1 Week Ago:   {fgi.previous_1_week:.1f}")
+print(f"1 Month Ago:  {fgi.previous_1_month:.1f}")
+print(f"1 Year Ago:   {fgi.previous_1_year:.1f}")
+```
+
+### Example 3: Analyze Individual Indicators
+
+```python
+from fear_greed_index import CNNFearAndGreedIndex
+
+fgi = CNNFearAndGreedIndex()
+
+print("Individual Market Indicators")
+print("=" * 50)
+for indicator in fgi.all_indicators:
+    status = "🔴" if indicator.score < 25 else "🟡" if indicator.score < 50 else "🟢"
+    print(f"{status} {indicator.name}: {indicator.score:.1f} ({indicator.rating})")
+```
+
+### Example 4: Trading Signal Based on Sentiment
+
+```python
+from fear_greed_index import CNNFearAndGreedIndex
+
+fgi = CNNFearAndGreedIndex()
+
+def get_trading_signal(score: float) -> str:
+    """Generate trading signal based on Fear & Greed score."""
+    if score < 20:
+        return "STRONG BUY - Extreme fear, potential opportunity"
+    elif score < 40:
+        return "BUY - Fear in the market"
+    elif score < 60:
+        return "HOLD - Neutral sentiment"
+    elif score < 80:
+        return "SELL - Greed in the market"
+    else:
+        return "STRONG SELL - Extreme greed, potential top"
+
+signal = get_trading_signal(fgi.score)
+print(f"Score: {fgi.score:.1f}")
+print(f"Signal: {signal}")
+```
+
+### Example 5: Historical Data Analysis with Pandas
+
+```python
+from fear_greed_index import CNNFearAndGreedIndex
+from datetime import datetime
+import pandas as pd
+
+fgi = CNNFearAndGreedIndex()
+
+# Convert historical data to DataFrame
+historical = fgi.get_historical_data()
+df = pd.DataFrame(historical)
+df['date'] = pd.to_datetime(df['x'], unit='ms')
+df = df.rename(columns={'y': 'score'})
+df = df[['date', 'score', 'rating']]
+
+# Analysis
+print(f"Data points: {len(df)}")
+print(f"Date range: {df['date'].min().date()} to {df['date'].max().date()}")
+print(f"Average score: {df['score'].mean():.1f}")
+print(f"Min score: {df['score'].min():.1f}")
+print(f"Max score: {df['score'].max():.1f}")
+
+# Count days in each sentiment zone
+print("\nSentiment Distribution:")
+print(df['rating'].value_counts())
+```
+
+### Example 6: Detect Sentiment Extremes
+
+```python
+from fear_greed_index import CNNFearAndGreedIndex
+from datetime import datetime
+
+fgi = CNNFearAndGreedIndex()
+
+historical = fgi.get_historical_data()
+
+# Find extreme fear days (score < 20)
+extreme_fear_days = [
+    (datetime.fromtimestamp(d['x']/1000).strftime('%Y-%m-%d'), d['y'])
+    for d in historical if d['y'] < 20
+]
+
+print(f"Extreme Fear Days (score < 20) in past year: {len(extreme_fear_days)}")
+for date, score in extreme_fear_days[-5:]:  # Show last 5
+    print(f"  {date}: {score:.1f}")
+```
+
+### Example 7: VIX-Specific Analysis
+
+```python
+from fear_greed_index import CNNFearAndGreedIndex
+
+fgi = CNNFearAndGreedIndex()
+
+vix = fgi.market_volatility
+print(f"VIX Indicator Score: {vix.score:.1f}")
+print(f"VIX Sentiment: {vix.rating}")
+print(f"Last Updated: {vix.timestamp.strftime('%Y-%m-%d %H:%M')}")
+
+# VIX is often inverse to market - high VIX = fear
+if vix.score < 30:
+    print("⚠️  High volatility expected - VIX indicating fear")
+elif vix.score > 70:
+    print("✅ Low volatility - VIX indicating complacency")
+```
+
+### Example 8: Export Data to JSON
+
+```python
+from fear_greed_index import CNNFearAndGreedIndex
+import json
+
+fgi = CNNFearAndGreedIndex()
+
+data = {
+    "timestamp": fgi.timestamp.isoformat() if fgi.timestamp else None,
+    "score": fgi.score,
+    "rating": fgi.rating,
+    "previous_close": fgi.previous_close,
+    "previous_1_week": fgi.previous_1_week,
+    "previous_1_month": fgi.previous_1_month,
+    "previous_1_year": fgi.previous_1_year,
+    "indicators": {
+        ind.name: {"score": ind.score, "rating": ind.rating}
+        for ind in fgi.all_indicators
+    }
+}
+
+print(json.dumps(data, indent=2))
+
+# Save to file
+with open("fear_greed_data.json", "w") as f:
+    json.dump(data, f, indent=2)
+```
+
 ## API Reference
 
 ### CNNFearAndGreedIndex
@@ -68,46 +226,62 @@ Then open http://localhost:8501 in your browser.
 Main class for accessing Fear & Greed data.
 
 **Attributes:**
-- `score` (float): Current index score (0-100)
-- `rating` (str): Current sentiment ("extreme fear", "fear", "neutral", "greed", "extreme greed")
-- `previous_close` (float): Previous trading day's score
-- `previous_1_week` (float): Score from 1 week ago
-- `previous_1_month` (float): Score from 1 month ago
-- `previous_1_year` (float): Score from 1 year ago
-- `historical_data` (list): List of historical data points
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `score` | float | Current index score (0-100) |
+| `rating` | str | Current sentiment rating |
+| `previous_close` | float | Previous trading day's score |
+| `previous_1_week` | float | Score from 1 week ago |
+| `previous_1_month` | float | Score from 1 month ago |
+| `previous_1_year` | float | Score from 1 year ago |
+| `timestamp` | datetime | Last update time |
+| `historical_data` | list | Historical data points (1 year) |
 
 **Indicator Attributes:**
-- `junk_bond_demand`
-- `market_volatility`
-- `put_call_options`
-- `market_momentum`
-- `stock_price_strength`
-- `stock_price_breadth`
-- `safe_haven_demand`
+| Attribute | Description |
+|-----------|-------------|
+| `junk_bond_demand` | Junk Bond Demand indicator |
+| `market_volatility` | Market Volatility (VIX) indicator |
+| `put_call_options` | Put and Call Options indicator |
+| `market_momentum` | Market Momentum (S&P 500) indicator |
+| `stock_price_strength` | Stock Price Strength indicator |
+| `stock_price_breadth` | Stock Price Breadth indicator |
+| `safe_haven_demand` | Safe Haven Demand indicator |
+| `all_indicators` | List of all indicator objects |
 
 **Methods:**
-- `get_score()` - Returns current score
-- `get_rating()` - Returns current rating
-- `get_index_summary()` - Returns formatted summary string
-- `get_indicators_report()` - Returns all indicators report
-- `get_complete_report()` - Returns full report with all data
-- `get_historical_data()` - Returns historical data points
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `get_score()` | float | Current index score |
+| `get_rating()` | str | Current sentiment rating |
+| `get_index_summary()` | str | Formatted summary string |
+| `get_indicators_report()` | str | All indicators report |
+| `get_complete_report()` | str | Full report with all data |
+| `get_historical_data()` | list | Historical data points |
+| `plot_fear_greed_index(ax)` | Axes | Plot historical chart |
+| `plot_all_indicators(fig)` | Figure | Plot indicators bar chart |
+| `plot_all_charts(fig)` | Figure | Plot complete dashboard |
 
 ### FearAndGreedIndicator
 
 Individual indicator class.
 
 **Attributes:**
-- `name` (str): Indicator name
-- `score` (float): Indicator score (0-100)
-- `rating` (str): Indicator sentiment
-- `timestamp` (datetime): Last update time
-- `historical_data` (list): Historical data for this indicator
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `name` | str | Indicator name |
+| `score` | float | Indicator score (0-100) |
+| `rating` | str | Indicator sentiment |
+| `timestamp` | datetime | Last update time |
+| `historical_data` | list | Historical data for this indicator |
 
 **Methods:**
-- `get_score()` - Returns score
-- `get_rating()` - Returns rating
-- `get_report()` - Returns formatted report string
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `get_score()` | float | Indicator score |
+| `get_rating()` | str | Indicator rating |
+| `get_name()` | str | Indicator name |
+| `get_report()` | str | Formatted report string |
 
 ## Understanding the Index
 
@@ -119,6 +293,16 @@ Individual indicator class.
 | 55-75 | Greed | Investors are confident |
 | 75-100 | Extreme Greed | Investors are very confident |
 
+### The 7 Indicators Explained
+
+1. **Junk Bond Demand**: Spread between junk bond yields and investment-grade bonds
+2. **Market Volatility (VIX)**: CBOE Volatility Index measuring expected S&P 500 volatility
+3. **Put/Call Options**: Ratio of put option volume to call option volume
+4. **Market Momentum**: S&P 500 vs its 125-day moving average
+5. **Stock Price Strength**: Number of stocks hitting 52-week highs vs lows
+6. **Stock Price Breadth**: McClellan Volume Summation Index
+7. **Safe Haven Demand**: Stock vs bond returns over 20 trading days
+
 ### Trading Implications
 
 - **Extreme Fear** often signals potential buying opportunities (contrarian indicator)
@@ -127,8 +311,40 @@ Individual indicator class.
 
 ## Data Source
 
-Data is fetched from CNN Business Fear & Greed Index:
-https://www.cnn.com/markets/fear-and-greed
+### CNN Fear & Greed Index
+
+- **Website**: https://www.cnn.com/markets/fear-and-greed
+- **API Endpoint**: `https://production.dataviz.cnn.io/index/fearandgreed/graphdata`
+
+> **Note**: The API endpoint is CNN's internal API used by their website. It is not officially documented and may change without notice. This library abstracts the API details so your code remains stable.
+
+### API Response Structure
+
+The CNN API returns JSON with the following structure:
+
+```json
+{
+  "fear_and_greed": {
+    "score": 24.37,
+    "rating": "extreme fear",
+    "timestamp": "2025-12-02T23:59:56+00:00",
+    "previous_close": 23.03,
+    "previous_1_week": 17.03,
+    "previous_1_month": 44.63,
+    "previous_1_year": 65.31
+  },
+  "fear_and_greed_historical": {
+    "data": [{"x": 1733184000000, "y": 59.57, "rating": "greed"}, ...]
+  },
+  "junk_bond_demand": {"score": 0.4, "rating": "extreme fear", ...},
+  "market_volatility_vix": {"score": 50.0, "rating": "neutral", ...},
+  "put_call_options": {"score": 22.2, "rating": "extreme fear", ...},
+  "market_momentum_sp500": {"score": 41.0, "rating": "fear", ...},
+  "stock_price_strength": {"score": 11.4, "rating": "extreme fear", ...},
+  "stock_price_breadth": {"score": 18.0, "rating": "extreme fear", ...},
+  "safe_haven_demand": {"score": 27.6, "rating": "fear", ...}
+}
+```
 
 ## License
 
