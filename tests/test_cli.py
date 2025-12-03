@@ -50,9 +50,12 @@ class TestCLIHelpers:
 
     def test_create_gauge(self):
         """Test gauge creation."""
+        from rich.text import Text
         gauge = create_gauge(50, width=20)
-        assert "█" in gauge
-        assert "░" in gauge
+        assert isinstance(gauge, Text)
+        plain = gauge.plain
+        assert "█" in plain
+        assert "░" in plain
 
 
 class TestCLICommands:

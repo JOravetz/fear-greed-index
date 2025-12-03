@@ -41,12 +41,15 @@ def get_emoji_for_score(score: float) -> str:
         return "💚"
 
 
-def create_gauge(score: float, width: int = 40) -> str:
-    """Create a text-based gauge."""
+def create_gauge(score: float, width: int = 40) -> Text:
+    """Create a text-based gauge as a Rich Text object."""
     filled = int((score / 100) * width)
     empty = width - filled
     color = get_color_for_score(score)
-    gauge = f"[{color}]{'█' * filled}[/{color}][dim]{'░' * empty}[/dim]"
+
+    gauge = Text()
+    gauge.append("█" * filled, style=color)
+    gauge.append("░" * empty, style="dim")
     return gauge
 
 
@@ -81,7 +84,9 @@ def dashboard():
 
     # Main score panel
     score_text = Text()
-    score_text.append(f"\n{create_gauge(fgi.score)}\n\n", style="bold")
+    score_text.append("\n")
+    score_text.append_text(create_gauge(fgi.score))
+    score_text.append("\n\n")
     score_text.append(f"  {fgi.score:.1f}", style=f"bold {color}")
     score_text.append(f"  {fgi.rating.upper()} {emoji}\n", style=f"bold {color}")
 
@@ -198,11 +203,19 @@ def indicators():
         emoji = get_emoji_for_score(ind.score)
         timestamp = ind.timestamp.strftime("%Y-%m-%d %H:%M") if ind.timestamp else "N/A"
 
+        content = Text()
+        content.append("\n")
+        content.append_text(create_gauge(ind.score))
+        content.append("\n\n")
+        content.append("Score: ")
+        content.append(f"{ind.score:.1f}", style=color)
+        content.append("  Rating: ")
+        content.append(f"{ind.rating.title()}", style=color)
+        content.append(f" {emoji}\n")
+        content.append(f"Updated: {timestamp}\n", style="dim")
+
         panel = Panel(
-            f"\n{create_gauge(ind.score)}\n\n"
-            f"Score: [{color}]{ind.score:.1f}[/{color}]  "
-            f"Rating: [{color}]{ind.rating.title()}[/{color}] {emoji}\n"
-            f"[dim]Updated: {timestamp}[/dim]\n",
+            content,
             title=f"[bold]{ind.name}[/bold]",
             box=box.ROUNDED,
         )
@@ -284,10 +297,15 @@ def watch():
             color = get_color_for_score(fgi.score)
             emoji = get_emoji_for_score(fgi.score)
 
+            content = Text()
+            content.append("\n")
+            content.append_text(create_gauge(fgi.score))
+            content.append("\n\n")
+            content.append(f"  {fgi.score:.1f}", style=f"bold {color}")
+            content.append(f"  {fgi.rating.upper()} {emoji}\n", style=color)
+
             console.print(Panel(
-                f"\n{create_gauge(fgi.score)}\n\n"
-                f"  [{color} bold]{fgi.score:.1f}[/{color} bold]  "
-                f"[{color}]{fgi.rating.upper()}[/{color}] {emoji}\n",
+                content,
                 title="[bold cyan]CNN FEAR & GREED INDEX[/bold cyan]",
                 subtitle=f"[dim]Refreshing every 60s | {datetime.now().strftime('%H:%M:%S')}[/dim]",
                 box=box.DOUBLE,
