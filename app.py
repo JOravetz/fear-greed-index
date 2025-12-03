@@ -143,7 +143,7 @@ def main():
 
     with col1:
         fig_gauge = create_gauge(cnn_fg.score, f"{cnn_fg.rating.title()}")
-        st.plotly_chart(fig_gauge, use_container_width=True)
+        st.plotly_chart(fig_gauge, width="stretch")
 
     with col2:
         st.markdown("### Market Summary")
@@ -173,7 +173,7 @@ def main():
     st.markdown("### Historical Trend")
     if cnn_fg.historical_data:
         fig_history = create_historical_chart(cnn_fg.historical_data)
-        st.plotly_chart(fig_history, use_container_width=True)
+        st.plotly_chart(fig_history, width="stretch")
 
     st.divider()
 
@@ -184,7 +184,7 @@ def main():
 
     with col1:
         fig_indicators = create_indicators_chart(cnn_fg.all_indicators)
-        st.plotly_chart(fig_indicators, use_container_width=True)
+        st.plotly_chart(fig_indicators, width="stretch")
 
     with col2:
         st.markdown("#### Indicator Details")
