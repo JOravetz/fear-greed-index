@@ -694,6 +694,31 @@ python3 install.py
 - [Alpaca MCP Documentation](https://docs.alpaca.markets/docs/alpaca-mcp-server)
 - [Building Trading Workflows with MCP](https://alpaca.markets/learn/mcp-trading-with-claude-alpaca-google-sheets)
 
+### Acknowledgments
+
+Special thanks to **Satoshi Ido** for his excellent contributions to the [Alpaca Markets MCP Server](https://github.com/alpacahq/alpaca-mcp-server), which enables seamless AI-powered trading workflows.
+
+## Testing
+
+Run the test suite to verify all features work correctly:
+
+```bash
+# Run all tests
+uv run pytest -v
+
+# Run README examples validation (tests all code examples from documentation)
+uv run pytest tests/test_readme_examples.py -v
+
+# Run core functionality tests
+uv run pytest tests/test_core.py -v
+
+# Run CLI tests
+uv run pytest tests/test_cli.py -v
+
+# Run MCP server tests
+uv run pytest tests/test_mcp_server.py -v
+```
+
 ## Disclaimer
 
 **THIS SOFTWARE IS PROVIDED FOR INFORMATIONAL AND EDUCATIONAL PURPOSES ONLY.**
