@@ -25,6 +25,7 @@ dependencies = [
 [project.scripts]
 fgi = "fgi_cli:main"
 fgi-mcp = "fgi_mcp_server:main"
+fgi-demo = "demo:main"
 
 [project.urls]
 Repository = "https://github.com/JOravetz/fear-greed-index"

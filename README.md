@@ -82,6 +82,23 @@ uv run fgi json
 uv run fgi watch
 ```
 
+### Interactive Demo
+
+Run the interactive demo to see all features in action:
+
+```bash
+uv run fgi-demo
+```
+
+The demo walks you through:
+1. CLI dashboard with gauge visualization
+2. Quick score and trading signal
+3. Individual indicators breakdown
+4. Historical data display
+5. JSON output format
+6. Python API usage
+7. Streamlit web dashboard
+
 ## Usage Examples
 
 ### Example 1: Basic Market Sentiment Check
