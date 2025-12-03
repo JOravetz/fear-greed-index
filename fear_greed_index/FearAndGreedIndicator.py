@@ -1,104 +1,80 @@
 """Fear and Greed Indicator Class"""
 __docformat__ = "numpy"
 
+from datetime import datetime
+from typing import Optional
+
 
 class FearAndGreedIndicator:
     """Fear and Greed Indicator
 
     Attributes
     ----------
-    type_indicator : str
-        Indicator type, from this list: Junk Bond Demand, Market Volatility,
-        Market Volatility, Put and Call Options, Market Momentum,
-        Stock Price Strength, Stock Price Breadth, Safe Heaven Demand
-    sentiment : str
-        Sentiment associated with this indicator
-    summary : str
-        Summary related with sentiment associated with this indicator
-    last_sentiment : str
-        Last sentiment of this indicator before being updated
-    self.last_changed : str
-        Datetime of the previous time the sentiment was updated
-    self.update_on : str
-        Datetime associated with most recent sentiment
-    self.chart : Image
-        Chart associated with this indicator
+    name : str
+        Indicator name (e.g., "Market Momentum", "Stock Price Strength")
+    score : float
+        Numeric score (0-100)
+    rating : str
+        Sentiment rating (e.g., "extreme fear", "fear", "neutral", "greed", "extreme greed")
+    timestamp : datetime
+        When the indicator was last updated
+    historical_data : list
+        Historical data points with x (timestamp), y (value), and rating
     """
 
-    def __init__(self, type_indicator: str):
+    def __init__(self, name: str, data: Optional[dict] = None):
         """Constructor
 
         Parameters
         ----------
-        type_indicator : str
-            Between the 7 Indicators: Junk Bond Demand, Market Volatility, Market Volatility,
-            Put and Call Options, Market Momentum, Stock Price Strength, Stock Price Breadth,
-            Safe Heaven Demand
+        name : str
+            Indicator name
+        data : dict, optional
+            API response data for this indicator
         """
-        self.type_indicator = type_indicator
-        self.sentiment = "N/A"
-        self.summary = "N/A"
-        self.last_sentiment = "N/A"
-        self.last_changed = "N/A"
-        self.update_on = "N/A"
-        self.chart = None
+        self.name = name
+        self.score = 0.0
+        self.rating = "N/A"
+        self.timestamp = None
+        self.historical_data = []
 
-    def _set_sentiment(self, sentiment):
-        """Set indicator sentiment"""
-        self.sentiment = sentiment
+        if data:
+            self._load_from_data(data)
 
-    def _set_summary(self, summary):
-        """Set indicator summary"""
-        self.summary = summary
+    def _load_from_data(self, data: dict):
+        """Load indicator data from API response"""
+        self.score = data.get("score", 0.0)
+        self.rating = data.get("rating", "N/A")
 
-    def _set_last_sentiment(self, last_sentiment):
-        """Set indicator last_sentiment"""
-        self.last_sentiment = last_sentiment
+        timestamp_ms = data.get("timestamp")
+        if timestamp_ms:
+            self.timestamp = datetime.fromtimestamp(timestamp_ms / 1000)
 
-    def _set_last_changed(self, last_changed):
-        """Set indicator last_changed"""
-        self.last_changed = last_changed
+        self.historical_data = data.get("data", [])
 
-    def _set_update_on(self, update_on):
-        """Set indicator update_on"""
-        self.update_on = update_on
+    def get_score(self) -> float:
+        """Get indicator score"""
+        return self.score
 
-    def _set_chart(self, chart):
-        """Set indicator chart"""
-        self.chart = chart
+    def get_rating(self) -> str:
+        """Get indicator rating"""
+        return self.rating
 
-    def get_sentiment(self):
-        """Get indicator sentiment"""
-        return self.sentiment
+    def get_name(self) -> str:
+        """Get indicator name"""
+        return self.name
 
-    def get_summary(self):
-        """Get indicator summary"""
-        return self.summary
+    def get_timestamp(self) -> Optional[datetime]:
+        """Get indicator timestamp"""
+        return self.timestamp
 
-    def get_last_sentiment(self):
-        """Get indicator last sentiment"""
-        return self.last_sentiment
+    def get_historical_data(self) -> list:
+        """Get historical data"""
+        return self.historical_data
 
-    def get_last_changed(self):
-        """Get indicator last changed"""
-        return self.last_changed
-
-    def get_update_on(self):
-        """Get indicator update on"""
-        return self.update_on
-
-    def get_type_indicator(self):
-        """Get indicator type"""
-        return self.type_indicator
-
-    def get_chart(self):
-        """Get indicator chart"""
-        return self.chart
-
-    def get_report(self):
+    def get_report(self) -> str:
         """Get indicator report"""
-        report = f"{self.type_indicator}: {self.sentiment}"
-        report += f"{(100-len(report))*' '}[{self.update_on}]\n"
-        report += f"   {self.summary}\n"
-        report += f"   ({self.last_changed})\n"
+        timestamp_str = self.timestamp.strftime("%b %d at %I:%M%p") if self.timestamp else "N/A"
+        report = f"{self.name}: {self.rating.title()} ({self.score:.1f})"
+        report += f"{(80-len(report))*' '}[Updated {timestamp_str}]"
         return report
