@@ -1,13 +1,5 @@
 {
   "mcpServers": {
-    "fear-greed-index": {
-      "command": "uv",
-      "args": ["run", "python", "fgi_mcp_server.py"],
-      "cwd": "/home/jjoravet/autotrade/fear-greed-index",
-      "env": {
-        "PATH": "${PATH}"
-      }
-    },
     "alpaca": {
       "command": "uvx",
       "args": ["alpaca-mcp-server", "serve"],
@@ -15,6 +7,11 @@
         "ALPACA_API_KEY": "${APCA_API_KEY_ID}",
         "ALPACA_SECRET_KEY": "${APCA_API_SECRET_KEY}"
       }
+    },
+    "fear-greed-index": {
+      "command": "uv",
+      "args": ["run", "python", "fgi_mcp_server.py"],
+      "cwd": "${PROJECT_ROOT}"
     }
   }
 }
