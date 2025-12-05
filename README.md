@@ -595,6 +595,31 @@ This library includes an MCP (Model Context Protocol) server that allows AI assi
 | `get_fear_greed_history` | Get historical data (configurable days) |
 | `get_complete_report` | Get full comprehensive report |
 
+### Configure for Claude Code
+
+Create a `.mcp.json` file in your project root:
+
+```json
+{
+  "mcpServers": {
+    "fear-greed-index": {
+      "command": "uv",
+      "args": ["run", "python", "fgi_mcp_server.py"],
+      "cwd": "/path/to/fear-greed-index",
+      "env": {
+        "PATH": "${PATH}"
+      }
+    }
+  }
+}
+```
+
+Verify the server is loaded:
+
+```bash
+claude mcp list
+```
+
 ### Configure for Claude Desktop
 
 Add to your Claude Desktop config (`~/.config/Claude/claude_desktop_config.json` on Linux, `~/Library/Application Support/Claude/claude_desktop_config.json` on Mac):
@@ -640,7 +665,32 @@ Combine Fear & Greed sentiment data with [Alpaca's MCP Server](https://github.co
 
 ### Setup Both MCP Servers
 
-Configure both servers in your Claude Desktop config:
+**For Claude Code**, create a `.mcp.json` file in your project root:
+
+```json
+{
+  "mcpServers": {
+    "fear-greed-index": {
+      "command": "uv",
+      "args": ["run", "python", "fgi_mcp_server.py"],
+      "cwd": "/path/to/fear-greed-index",
+      "env": {
+        "PATH": "${PATH}"
+      }
+    },
+    "alpaca": {
+      "command": "uvx",
+      "args": ["alpaca-mcp-server", "serve"],
+      "env": {
+        "ALPACA_API_KEY": "${APCA_API_KEY_ID}",
+        "ALPACA_SECRET_KEY": "${APCA_API_SECRET_KEY}"
+      }
+    }
+  }
+}
+```
+
+**For Claude Desktop**, add to your config file:
 
 ```json
 {
