@@ -595,6 +595,17 @@ This library includes an MCP (Model Context Protocol) server that allows AI assi
 | `get_fear_greed_history` | Get historical data (configurable days) |
 | `get_complete_report` | Get full comprehensive report |
 
+### Quick Test
+
+Verify the MCP server works before configuring your IDE:
+
+```bash
+# Test the server starts without errors
+uv run python fgi_mcp_server.py
+
+# You should see the server waiting for input (press Ctrl+C to exit)
+```
+
 ### Configure for Claude Code
 
 Create a `.mcp.json` file in your project root:
