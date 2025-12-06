@@ -27,6 +27,15 @@ uv sync
 pip install -e .
 ```
 
+## Quick Commands
+
+After installing with UV, these are the most useful commands:
+
+```bash
+uv run fgi --help      # CLI help - see all available commands
+uv run pytest -v       # Run the test suite
+```
+
 ## Quick Start
 
 ### Python API
