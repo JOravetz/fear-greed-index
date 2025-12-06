@@ -53,3 +53,4 @@ fgi = CNNFearAndGreedIndex()
 print(fgi.score, fgi.rating)
 print(fgi.market_momentum.score)
 ```
+- Never include my API keys in any GIT repository.
