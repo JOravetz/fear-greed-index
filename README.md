@@ -593,6 +593,18 @@ The CNN API returns JSON with the following structure:
 
 This library includes an MCP (Model Context Protocol) server that allows AI assistants like Claude, Cursor, and VS Code to query Fear & Greed data using natural language.
 
+### Quick Reference Command
+
+Use the `/mcp-tools` slash command in Claude Code to list all available MCP tools:
+
+```bash
+/mcp-tools
+```
+
+This displays a complete reference of all Fear & Greed Index and Alpaca trading tools available through the MCP servers.
+
+To set up the custom command, create `~/.claude/commands/mcp-tools.md` with your tool documentation.
+
 ### Available MCP Tools
 
 | Tool | Description |
